@@ -1,0 +1,1896 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Safety Rules Flash Cards</title>
+  <style>
+    :root{
+      --bg:#0b0c10;
+      --panel:#12141a;
+      --card:#171a22;
+      --text:#e9eef7;
+      --muted:#aab4c3;
+      --border:#2a2f3a;
+      --accent:#7aa2ff;
+      --shadow: 0 10px 25px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+
+    /* Sticky top bar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      background:rgba(18,20,26,.92);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar-inner{
+      max-width:1100px;
+      margin:0 auto;
+      padding:12px 16px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .brand{
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      white-space:nowrap;
+    }
+    .brand strong{font-size:16px}
+    .brand span{color:var(--muted); font-size:13px}
+
+    .nav{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .nav a{
+      text-decoration:none;
+      color:var(--text);
+      border:1px solid var(--border);
+      background:transparent;
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:13px;
+      transition: .15s ease;
+    }
+    .nav a:hover{
+      border-color:rgba(122,162,255,.55);
+      box-shadow: 0 0 0 3px rgba(122,162,255,.12);
+    }
+
+    /* Layout */
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 48px;
+    }
+    .section{
+      margin-top:26px;
+      padding-top:10px;
+    }
+    .section h2{
+      margin:0 0 10px;
+      font-size:22px;
+      letter-spacing:.2px;
+    }
+    .section p.note{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    /* Controls */
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:14px 0 0;
+    }
+    button{
+      appearance:none;
+      border:1px solid var(--border);
+      background:var(--panel);
+      color:var(--text);
+      padding:9px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:13px;
+      transition:.15s ease;
+    }
+    button:hover{
+      border-color:rgba(122,162,255,.55);
+      box-shadow: 0 0 0 3px rgba(122,162,255,.12);
+    }
+
+/* Flashcards – mobile-first single column */
+.grid{
+  display:grid;
+  grid-template-columns: 1fr;   /* one column only */
+  gap:16px;                     /* more space between cards */
+}
+
+
+    details.flash{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    details.flash[open]{
+      border-color:rgba(122,162,255,.55);
+    }
+    summary{
+      list-style:none;
+      cursor:pointer;
+      padding:14px 14px 12px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    summary::-webkit-details-marker{display:none;}
+    .badge{
+      flex:0 0 auto;
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      margin-top:1px;
+    }
+    .front{
+      font-weight:650;
+      letter-spacing:.1px;
+    }
+    .hint{
+      margin-left:auto;
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .back{
+      padding:0 14px 14px;
+      color:var(--text);
+    }
+    .back .label{
+      display:inline-block;
+      margin:8px 0 8px;
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:3px 8px;
+      border-radius:999px;
+    }
+    .back p{
+      margin:0;
+      white-space:pre-wrap;
+    }
+
+    /* Tiny footer */
+    .footer{
+      margin-top:26px;
+      color:var(--muted);
+      font-size:13px;
+      border-top:1px solid var(--border);
+      padding-top:14px;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.03);
+    }
+/* Lock screen */
+#lockscreen{
+  position:fixed;
+  inset:0;
+  background:#0b0c10;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.lockbox{
+  background:#171a22;
+  border:1px solid #2a2f3a;
+  border-radius:16px;
+  padding:24px;
+  width:100%;
+  max-width:320px;
+  text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.5);
+}
+
+.lockbox h1{
+  margin:0 0 8px;
+}
+
+.lockbox input{
+  width:100%;
+  padding:12px;
+  margin:12px 0;
+  border-radius:10px;
+  border:1px solid #2a2f3a;
+  background:#0b0c10;
+  color:#e9eef7;
+  font-size:16px;
+}
+
+.lockbox button{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  font-size:15px;
+}
+
+.error{
+  color:#ff6b6b;
+  font-size:13px;
+  margin-top:8px;
+}
+
+
+  </style>
+</head>
+<body>
+<div id="lockscreen">
+  <div class="lockbox">
+    <h1>Enter PIN</h1>
+    <p>This content is protected.</p>
+    <input type="password" id="pinInput" placeholder="Enter PIN" />
+    <button onclick="unlock()">Unlock</button>
+    <p id="error" class="error"></p>
+  </div>
+</div>
+
+<div id="content" style="display:none;">
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <strong>Safety Rules Flash Cards</strong>
+        <span>Appointed Person</span>
+      </div>
+      <nav class="nav">
+	<a href="#foreword">Foreword</a>
+	<a href="#interpretations">Interpretations</a>
+	<a href="#roles">Roles</a>
+	<a href="#confined-space">Confined Space</a>
+	<a href="#openings">Openings</a>
+	<a href="#hotworks">Hotworks</a>
+	<a href="#isolations">Isolations</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+<section class="section" id="quiz">
+  <h2>Random Question</h2>
+  <p class="note">Test yourself before revealing the answer.</p>
+
+<div class="controls">
+  <button onclick="randomQuestion()">Ask me a random question</button>
+  <button onclick="revealAnswer()">Reveal answer</button>
+  <button onclick="toggleSpeech()" id="speechBtn">🔊 Voice: ON</button>
+</div>
+
+
+  <details class="flash" id="quizCard" style="margin-top:16px; display:none;">
+    <summary>
+      <span class="badge">Quiz</span>
+      <span class="front" id="quizQuestion"></span>
+    </summary>
+    <div class="back">
+      <span class="label">Answer</span>
+      <p id="quizAnswer"></p>
+    </div>
+  </details>
+</section>
+
+
+    <!-- FOREWORD -->
+    <section class="section" id="foreword">
+      <h2>Foreword</h2>
+      <p class="note">Tap a card to reveal the reverse. These are “what to say” versions.</p>
+
+      <div class="controls">
+        <button type="button" data-action="open" data-target="foreword">Open all</button>
+        <button type="button" data-action="close" data-target="foreword">Close all</button>
+      </div>
+
+      <div class="grid" data-section="foreword">
+        <!-- SSSWAD -->
+        <details class="flash">
+          <summary>
+            <span class="badge">S</span>
+            <span class="front">Safety Rules are provided</span>
+            <span class="hint">Click to reveal</span>
+          </summary>
+          <div class="back">
+            <span class="label">Back</span>
+            <p>The Indaver Rivenhall IWMF Safety Rules are provided to ensure work can be undertaken without hazard from electrical, mechanical, or associated plant equipment.</p>
+          </div>
+        </details>
+
+        <details class="flash">
+          <summary>
+            <span class="badge">S</span>
+            <span class="front">Safety Rules are mandatory</span>
+            <span class="hint">Click to reveal</span>
+          </summary>
+          <div class="back">
+            <span class="label">Back</span>
+            <p>The Safety Rules are mandatory for work at Rivenhall IWMF. It is the duty of every person involved to be familiar with and comply with the Safety Rules, supporting documents, and relevant statutory requirements.</p>
+          </div>
+        </details>
+
+        <details class="flash">
+          <summary>
+            <span class="badge">S</span>
+            <span class="front">Safety Rules do not make a job safe</span>
+            <span class="hint">Click to reveal</span>
+          </summary>
+          <div class="back">
+            <span class="label">Back</span>
+            <p>Safety Rules do not, by themselves, make a job safe. The achievement of safety from all inherent dangers also depends on full and logical preparation of work. This includes identifying and assessing all reasonably foreseeable risks, implementing suitable control measures, and ensuring the work is carried out safely by competent personnel.</p>
+          </div>
+        </details>
+
+        <details class="flash">
+          <summary>
+            <span class="badge">W</span>
+            <span class="front">Work is never so urgent</span>
+            <span class="hint">Click to reveal</span>
+          </summary>
+          <div class="back">
+            <span class="label">Back</span>
+            <p>No work is so urgent or important that there is no time to plan it properly, assess the risks, and carry it out safely.</p>
+          </div>
+        </details>
+
+        <details class="flash">
+          <summary>
+            <span class="badge">A</span>
+            <span class="front">Assessing risk</span>
+            <span class="hint">Click to reveal</span>
+          </summary>
+          <div class="back">
+            <span class="label">Back</span>
+            <p>A risk assessment is a careful examination of all reasonably foreseeable risks associated with the task and the inherent risks present in the system in its operational state, to reduce the risk of injury or ill health to a level as low as reasonably practicable.</p>
+          </div>
+        </details>
+
+        <details class="flash">
+          <summary>
+            <span class="badge">D</span>
+            <span class="front">Disciplinary for non-compliance</span>
+            <span class="hint">Click to reveal</span>
+          </summary>
+          <div class="back">
+            <span class="label">Back</span>
+            <p>Failure to comply with the Safety Rules, associated procedures, or safety documentation may result in disciplinary action in accordance with company policy.</p>
+          </div>
+        </details>
+
+        <!-- PPP -->
+        <details class="flash">
+          <summary>
+            <span class="badge">P</span>
+            <span class="front">Policy</span>
+            <span class="hint">Click to reveal</span>
+          </summary>
+          <div class="back">
+            <span class="label">Back</span>
+            <p>It is Indaver Group Policy that a health and safety management system is in place, with legal compliance regarded as the minimum standard. The Safety Rules form part of this system and are supported by company procedures and guidance documents.</p>
+          </div>
+        </details>
+
+        <details class="flash">
+          <summary>
+            <span class="badge">P</span>
+            <span class="front">Philosophy</span>
+            <span class="hint">Click to reveal</span>
+          </summary>
+          <div class="back">
+            <span class="label">Back</span>
+            <p>Plant and/or apparatus may form interconnected systems containing inherent dangers. In normal operation they can be operated safely if procedures are followed. When work departs from normal operation, Safety Rules and Safe Systems of Work are required to protect people from those inherent dangers, and additional SSoWs may be needed for hazards outside the system.</p>
+          </div>
+        </details>
+
+        <details class="flash">
+          <summary>
+            <span class="badge">P</span>
+            <span class="front">Principles</span>
+            <span class="hint">Click to reveal</span>
+          </summary>
+          <div class="back">
+            <span class="label">Back</span>
+            <p>The Safety Rules are based on establishing a Safe System of Work before work starts; achieving safety primarily through controlled isolation and control of stored energy; restricting live work unless justified with precautions; and ensuring work is carried out by competent, authorised persons using the correct documentation and procedures.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- INTERPRETATIONS (placeholder) -->
+    <section class="section" id="interpretations">
+      <h2>Interpretations</h2>
+      <p class="note">Tap a card to reveal the reverse. These are “what to say” versions.</p>
+
+      <div class="controls">
+        <button type="button" data-action="open" data-target="interpretations">Open all</button>
+        <button type="button" data-action="close" data-target="interpretations">Close all</button>
+      </div>
+
+<div class="grid" data-section="interpretations">
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Def</span>
+      <span class="front">What does “shall” mean?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+When “shall” is used, the requirement is mandatory. It must be complied with and no discretion or judgement is permitted.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Def</span>
+      <span class="front">What does “shall where practicable” mean?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+“Shall where practicable” means the requirement must be met wherever it is possible to do so, taking into account current knowledge and the hazards involved. The requirement cannot be avoided due to difficulty, inconvenience, or cost.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Def</span>
+      <span class="front">What does “shall where reasonably practicable” mean?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+“Shall where reasonably practicable” means a balanced judgement must be made, weighing the level of risk against the time, cost, effort, and trouble required to reduce it.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Def</span>
+      <span class="front">What does the term “work” include?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+In these Safety Rules, the term “work” may also include testing.
+      </p>
+    </div>
+  </details>
+
+</div>
+
+<section class="section" id="roles">
+  <h2>Roles</h2>
+  <p class="note">
+    Definitions of key roles and responsibilities under the Safety Rules.
+  </p>
+
+  <div class="controls">
+    <button type="button" data-action="open" data-target="roles">Open all</button>
+    <button type="button" data-action="close" data-target="roles">Close all</button>
+  </div>
+
+<div class="grid" data-section="roles">
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Role</span>
+      <span class="front">What is a Working Party?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+A Working Party is the persons working under the supervision of an Acceptor, including an Acceptor working alone.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Doc</span>
+      <span class="front">What is a Multiple Working Party Safety Document?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+A Multiple Working Party Safety Document allows one or more working parties to carry out work at the same time under the same Safety Document. Only a Limited Work Certificate or a Permit For Work are permitted in this format. A Permit ROS or Sanction For Operation and Testing is not permitted and must be a Single Working Party Document.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Doc</span>
+      <span class="front">What is a Single Working Party Safety Document?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+A Single Working Party Safety Document allows only one working party to carry out work under it at any one time.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Sup</span>
+      <span class="front">What is Supervision?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+Supervision under the Safety Rules means either Immediate Supervision or Personal Supervision, depending on the level required.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Sup</span>
+      <span class="front">What is Immediate Supervision?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+Immediate Supervision is supervision by a person who is continually available at the location when work or testing is in progress and who attends the work area as often as necessary to ensure the work is carried out safely.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Sup</span>
+      <span class="front">What is Personal Supervision?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+Personal Supervision is supervision where the supervising person is present at the work location, observing the work, and able to intervene.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Role</span>
+      <span class="front">What is a Plant Controller?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+A Plant Controller is a person authorised in writing by the Location Plant Manager, responsible for the release of plant and/or apparatus at the location for work and for coordinating safety activities at system interfaces with other companies. The Plant Controller may also fulfil the role of Safety Controller, Appointed Person, or Acceptor.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Role</span>
+      <span class="front">What is a Safety Controller?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+A Safety Controller is a person authorised in writing by the Location Plant Manager who is responsible for ensuring adequate precautions are taken to provide safety from the system. This includes, where appropriate, preparing and cancelling a specified Safety Document. The Safety Controller may also fulfil the role of Appointed Person or Acceptor.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Role</span>
+      <span class="front">What is an Issuer?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+An Issuer is a person authorised in writing by the Location Plant Manager to issue and transfer a specified Safety Document (as part of the Safety Controller arrangements).
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Role</span>
+      <span class="front">What is an Appointed Person?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+An Appointed Person is a person nominated by the Location Plant Manager to carry out specified duties relating to safety from the system. An Appointed Person may also fulfil the role of Acceptor.
+      </p>
+    </div>
+  </details>
+
+  <details class="flash">
+    <summary>
+      <span class="badge">Role</span>
+      <span class="front">What is an Acceptor?</span>
+      <span class="hint">Click to reveal</span>
+    </summary>
+    <div class="back">
+      <span class="label">Back</span>
+      <p>
+An Acceptor is a person nominated by the Location Plant Manager to provide supervision to members of a Working Party and to accept, surrender, transfer, and clear specified Safety Documents.
+      </p>
+    </div>
+  </details>
+
+</div>
+
+
+
+<section class="section" id="confined-space">
+  <h2>Confined Space</h2>
+  <p class="note">
+    Key confined space hazards, categories, responsibilities, and controls.
+  </p>
+
+  <div class="controls">
+    <button type="button" data-action="open" data-target="confined-space">Open all</button>
+    <button type="button" data-action="close" data-target="confined-space">Close all</button>
+  </div>
+
+  <div class="grid" data-section="confined-space">
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Hazards</span>
+        <span class="front">What hazards are likely in a Confined Space?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Hazards in a Confined Space may include oxygen deficiency, oxygen enrichment, hazardous gases or vapours from processes, residues or sludge, fumes generated by work activities, fire or explosion, heat stress, drowning from liquids, engulfment by solids, asphyxiation, entrapment, and restricted access or egress.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Levels</span>
+        <span class="front">How many Confined Space categories are there?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+There are four categories of Confined Space: Levels 1 to 4, ranging from low specified risk to high risk.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">CS 4</span>
+        <span class="front">What is a Level 4 Confined Space?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+A Level 4 Confined Space is high risk, with difficult access or egress, multiple obstacles, heat stress, or known hazards. All operatives must be trained in the use of breathing apparatus, and a full external rescue team with BA capability must be on standby.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">CS 3</span>
+        <span class="front">What is a Level 3 Confined Space?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+A Level 3 Confined Space is medium risk with difficult access or egress where permanent attachment to a safety line is not possible. Operatives must have escape sets. The requirement for a rescue team is determined by risk assessment.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">CS 2</span>
+        <span class="front">What is a Level 2 Confined Space?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+A Level 2 Confined Space is low specified risk with reasonable access and egress. Persons may remain attached to a safety line at all times, and escape breathing apparatus may be required.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">CS 1</span>
+        <span class="front">What is a Level 1 Confined Space?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+A Level 1 Confined Space is low specified risk with a shallow entry of less than 1200mm, adequate natural or mechanical ventilation, simple and unobstructed access, and no likely risk of flooding.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Responsibility</span>
+        <span class="front">Who is responsible once a Confined Space Permit is issued?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Acceptor is responsible once the Confined Space Permit has been issued.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Responsibility</span>
+        <span class="front">Who arranges a Standby Man?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Acceptor is responsible for arranging a Standby Man.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Testing</span>
+        <span class="front">Who is responsible for atmospheric testing?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Appointed Person is responsible for completing atmospheric testing when required.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Notice</span>
+        <span class="front">Who posts Confined Space notices?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Safety Controller is responsible for posting Confined Space notices at access points.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Control</span>
+        <span class="front">How must access doors and covers be controlled?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Access doors and covers to Confined Spaces must be locked in the open position or removed to prevent them from being closed.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Prohibition</span>
+        <span class="front">Can gas cylinders be taken into a Confined Space?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+No. Gas cylinders must not be taken into a Confined Space.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Standby</span>
+        <span class="front">What are the key responsibilities of a Standby Man?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Standby Man must remain outside the Confined Space at all times, never enter the space, maintain communication, keep records of persons inside, monitor the Gas Free Certificate, ensure notices are in place, respond to emergencies, keep access points clear, and remain present and attentive at all times.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Closure</span>
+        <span class="front">What are the Acceptor’s responsibilities when closing a Confined Space?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Acceptor must ensure all tools and equipment are removed, withdraw the working party, prevent re-entry, and clear the Safety Document.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Closure</span>
+        <span class="front">What are the Safety Controller’s responsibilities when closing a Confined Space?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Once all Safety Documents are cleared, the Safety Controller must arrange a final inspection under appropriate safety arrangements, remove the Confined Space notice, and ensure the space is closed. If closure is delayed, suitable barriers and signage must be put in place.
+        </p>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+
+<section class="section" id="openings">
+  <h2>Openings</h2>
+  <p class="note">
+    Requirements for creating, controlling, and closing openings, including roles and barrier controls.
+  </p>
+
+  <div class="controls">
+    <button type="button" data-action="open" data-target="openings">Open all</button>
+    <button type="button" data-action="close" data-target="openings">Close all</button>
+  </div>
+
+  <div class="grid" data-section="openings">
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Process</span>
+        <span class="front">Where is a floor opening mentioned during the process?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The floor opening is identified in the RAMS and the Work Order (WO).
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Barrier</span>
+        <span class="front">What is considered a suitable barrier for an opening?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Barriers shall be robust so that if a person falls against them they cannot fall down or through the opening.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Signage</span>
+        <span class="front">What signage must be displayed on opening barriers?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+A “Caution Openings” warning notice must be displayed on the barriers.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Role</span>
+        <span class="front">What are the Plant Controller’s responsibilities for openings?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Plant Controller is responsible for giving consent for the creation of openings.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Role</span>
+        <span class="front">What are the Safety Controller’s responsibilities for openings?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Safety Controller must obtain consent from the Plant Controller to create an opening and for the release of any plant required. The Safety Controller designates an Appointed Person–Openings, completes the relevant sections of the Openings Form (Appendix A), and maintains the required records.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Role</span>
+        <span class="front">What are the Appointed Person–Openings responsibilities?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Appointed Person–Openings ensures openings are adequately and suitably barriered before creation, inspects closure before barriers are removed, completes the Openings Forms (Appendix A and B), and maintains the required records.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Role</span>
+        <span class="front">What are the Acceptor’s responsibilities for openings?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Once permission is given, the Acceptor is responsible for all work within the barriered area. The Acceptor checks barrier integrity and completes the checklist for the duration of the work (Appendix B), and closes openings within the barriered area on completion of the work.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Barrier</span>
+        <span class="front">What is NOT an acceptable barrier for an opening?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Tape or rope barriers are not acceptable to barrier an opening.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Checks</span>
+        <span class="front">Who inspects the barriers once they are in place?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Appointed Person–Openings inspects the barriers once they are in place.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Checks</span>
+        <span class="front">Who checks and signs daily that barriers are adequate?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Acceptor checks and signs daily to confirm the barriers are adequate.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Docs</span>
+        <span class="front">What document does the Acceptor sign for barrier checks?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Appendix B.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Gate</span>
+        <span class="front">If a barrier has a swing gate, how is it secured and who holds the key?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+A safety chain and safety lock must be used to keep the gate locked. The swing gate chain key is issued to the Acceptor of the working party with the permit.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Change</span>
+        <span class="front">If the Acceptor needs to alter a barrier, who must they get permission from?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Acceptor must seek permission from the Appointed Person–Openings before altering a barrier.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Lifting</span>
+        <span class="front">If a mechanical lifting device is needed to lift off an opening, what must the Appointed Person do?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Appointed Person–Openings must personally supervise the work.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Rule</span>
+        <span class="front">Can a barrier be removed while an opening is still open?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+No. In all circumstances the opening shall be closed prior to the removal of any barriers.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Close-out</span>
+        <span class="front">After the Acceptor closes the opening, what happens next?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Appointed Person–Openings signs the appropriate section on Appendix B and returns the completed form to the Safety Controller.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Scope</span>
+        <span class="front">Does this openings procedure refer to anything else?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Yes — it also refers to handrail removals.
+        </p>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+
+<section class="section" id="hotworks">
+  <h2>Hot Works</h2>
+  <p class="note">
+    Hazards, responsibilities, gas testing, monitoring, and what to do if hot work is identified mid-task.
+  </p>
+
+  <div class="controls">
+    <button type="button" data-action="open" data-target="hotworks">Open all</button>
+    <button type="button" data-action="close" data-target="hotworks">Close all</button>
+  </div>
+
+  <div class="grid" data-section="hotworks">
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Hazards</span>
+        <span class="front">Hot work has inherent hazards — describe the main effects.</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Hot work hazards can include: fire from heat transfer onto flammable materials; explosion where flammables reach their explosive limit; burns from heat transfer; poisonous fumes or vapours from the work (e.g., welding/grinding/cutting, including galvanised coatings); oxygen depletion during welding/cutting; and arc eye/corneal burns from UV radiation during welding.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Role</span>
+        <span class="front">Who is in charge of Hot Works once a permit is issued?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The person in charge of hot work activities shall be an Acceptor – Hot Work. They must be in receipt of a Safety Document and a Hot Work Certificate before allowing hot work to commence.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Decision</span>
+        <span class="front">Who decides if additional fire monitoring is required?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Appointed Person decides if additional fire monitoring is required.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Monitoring</span>
+        <span class="front">If additional monitoring is required, what is the minimum duration and who decides how it’s done?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Where additional monitoring is identified, the minimum duration is 3 hours. The Plant Controller is responsible for determining how this monitoring is carried out.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Examples</span>
+        <span class="front">Give examples of how additional monitoring may be achieved.</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Examples include reinstatement of fire alarms and detectors, using installed cameras, and carrying out regular checks by personnel.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Assessment</span>
+        <span class="front">What should an Appointed Person consider during a Hot Work assessment?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Appointed Person reviews the task and considers whether there is a practicable alternative to hot work — for example, can the task be moved to the workshop.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Fire Watch</span>
+        <span class="front">Who arranges the Fire Watch person?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Acceptor is responsible for arranging a Fire Watch person.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Display</span>
+        <span class="front">How is the Hot Work certificate secured/displayed at the job?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Appointed Person secures the Hot Work certificate in a weatherproof transparent folder and clearly displays it at the hot work location.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Gas Test</span>
+        <span class="front">When a gas test is required for Hot Work, what gases are tested for?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+O2, H2S, LEL, CO, and NH3.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Definition</span>
+        <span class="front">What is the definition of Hot Work?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Hot Work is any temporary operation involving the introduction of open flames or the production of heat or sparks, including (but not limited to) brazing, cutting, grinding, soldering, or welding.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Process</span>
+        <span class="front">If Hot Work is identified during the work process, what are the requirements?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+If hot work is identified during the work process: new RAMS are required to include the hot work; the original Safety Document is cancelled; the Safety Controller prepares a new Safety Document including hot work; the Acceptor receives the new Safety Document; and a Hot Work Assessment is carried out, issued, and posted at the work site.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Fire Watch</span>
+        <span class="front">What are the responsibilities of a Fire Watch person?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Fire Watch person confirms the Hot Work Assessment is displayed and checks the designated fire watch period. They remain at the hot work location during hot works, during breaks, and after completion as directed by the Acceptor – Hot Work and as detailed on the assessment. They maintain communications with the Control Room (competent with site radio). In an emergency they radio the Control Room and inform the Acceptor. They must not carry out any other work while on fire watch and must be authorised to perform fire watch duties.
+        </p>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+
+<section class="section" id="isolations">
+  <h2>Isolations</h2>
+  <p class="note">
+    Definitions, roles, key safes/locks/tags, and mechanical/electrical isolation hazards and controls.
+  </p>
+
+  <div class="controls">
+    <button type="button" data-action="open" data-target="isolations">Open all</button>
+    <button type="button" data-action="close" data-target="isolations">Close all</button>
+  </div>
+
+  <div class="grid" data-section="isolations">
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Principle</span>
+        <span class="front">What is the primary means of achieving Safety from the System?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Safety from the System is primarily achieved by controlled isolation from the System and control of stored energy.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Rules</span>
+        <span class="front">What does “shall” mean?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+“Shall” means it must be done — no discretion or judgement is allowed.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Rules</span>
+        <span class="front">What does “shall where practicable” (SWP) mean?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+SWP means if it can be done, it must be done — it cannot be avoided due to time, cost, or effort.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Rules</span>
+        <span class="front">What does “shall where reasonably practicable” (SWRP) mean?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+SWRP means judgement is allowed — balancing the level of risk against the time, cost, effort, and trouble needed to reduce it.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Defs</span>
+        <span class="front">What is the difference between Plant and Apparatus?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Apparatus is anything containing an electrical conductor. Plant is everything else.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Defs</span>
+        <span class="front">What is the definition of “Isolated”?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Isolated means disconnected from associated Plant and/or Apparatus by an isolating device in the isolating position, or by adequate physical separation or sufficient gap.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Defs</span>
+        <span class="front">What is the definition of “Drained”?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Drained means the contents of Plant and/or Apparatus are adjusted and maintained at a level which avoids Danger.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Defs</span>
+        <span class="front">What is the definition of “Vented”?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Vented means the contents of Plant and/or Apparatus are adjusted and maintained at atmospheric pressure.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Defs</span>
+        <span class="front">What is the definition of “Purged”?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Purged means Plant and/or Apparatus is in a condition where any dangerous contents have been removed.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Tag</span>
+        <span class="front">What is a Safety Tag?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+A Safety Tag is an approved means of identifying locally the point of application of safety precautions.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Voltage</span>
+        <span class="front">What is Low Voltage (LV)?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Low voltage is anything below 1000V.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Form</span>
+        <span class="front">What is included on a Declaration of Isolation form?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Declaration of Isolation includes: Key Safe number, key number(s), Safety Document number, points of isolation and descriptions, isolated position, Appointed Person signature, reinstatement signature, and sign-off signatures at the bottom of the document.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Keys</span>
+        <span class="front">Name the different types of keys used.</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Key Safe Key: unique at the location, operates a Key Safe lock other than the control lock. 
+Control Key: issued solely to Safety Controllers to operate the control lock of a Key Safe. 
+Safety Key: unique at the location, operates a safety lock that locks an isolating device/earthing device/vent/drain.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Device</span>
+        <span class="front">What is a Key Safe?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+A Key Safe is an approved device for the secure retention of keys.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Locks</span>
+        <span class="front">Describe Control Lock, Personal Lock, and Safety Lock.</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Control Lock: a lock on a Key Safe or Card Safe that only Safety Controllers have a key for. 
+Personal Lock: unique at the location, issued to an Acceptor for securing Safety Documents in a Card Safe. 
+Safety Lock: an approved device for securing points of isolation, operated by a unique Safety Key.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Danger</span>
+        <span class="front">Name some inherent dangers in the system.</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Examples include electricity, moving parts, springs, capacitors, stored pressure, and gravity.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Role</span>
+        <span class="front">What are the Safety Controller’s responsibilities for isolations?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Safety Controller ensures the procedure is followed and appoints the Appointed Person – Isolations to carry out isolation and reinstatement of plant and/or apparatus as required.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Role</span>
+        <span class="front">What are the Appointed Person – Isolations responsibilities?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Appointed Person – Isolations receives instruction from the Safety Controller to carry out isolations as per the Declaration of Isolation, including sequence and method, and reinstates plant and/or apparatus when authorised.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Role</span>
+        <span class="front">What are the Acceptor’s responsibilities during isolations?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+The Acceptor liaises with the Appointed Person – Isolations before isolation takes place. The Acceptor does not carry out isolations and must not alter them. If changes are required or work is complete, the Appointed Person – Isolations must be called to make the change or remove isolation.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Mechanical</span>
+        <span class="front">What hazards must be released for mechanical machinery?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Residual energy must be released: 
+Mechanical—allow rotating parts to run down and release springs; 
+Electrical—discharge capacitors, disconnect/remove batteries; 
+Hydraulic—depressurise accumulators and pipework; 
+Pneumatic—depressurise systems and disconnect lines if trapped air could operate valves; 
+Services—steam/gas/fuel may need depressurising, venting, purging, or draining; 
+Also consider gravity—engineered chocks may be required.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Electrical</span>
+        <span class="front">What are the hazards and key controls for electrical equipment?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Electrical hazards include electric shock, burns, and arcing that can ignite flammable materials. Isolate the main power circuit and any hazardous auxiliary circuits, disconnect and separate from every source of energy, and discharge stored energy (especially batteries and capacitors).
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Devices</span>
+        <span class="front">Name devices suitable for electrical isolation.</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Circuit breakers with required contact separation and locking; disconnectors/isolators with locking; switch disconnectors with locking; plug and socket outlets; fuse links; removable links.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Rule</span>
+        <span class="front">What do the rules say about isolating mechanical plant?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Mechanical plant and equipment isolating devices shall, where practicable, be secured in the isolated position using a Safety Lock (or locks) and Appendix A Safety Tag(s) applied. Isolations are determined by the Safety Controller using methods such as P&IDs, site inspections, and documentation.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Physical</span>
+        <span class="front">What is classed as a physical isolation?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Examples of physical isolation include valves, spades, and blank flanges.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">LV</span>
+        <span class="front">How should LV isolating devices be secured (SWP)?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+LV isolating devices shall, where practicable, be secured in the isolated position by a Safety Lock (or locks) and an Appendix A Safety Tag applied.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Exception</span>
+        <span class="front">If a Safety Lock is not reasonably practicable, what do you do?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Inform the Safety Controller.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Alt Control</span>
+        <span class="front">If a Safety Lock isn’t reasonably practicable, how can work proceed safely?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Once the Safety Controller has been informed, the LV isolation device may be deemed locked once safety tape has been applied and it is tagged with an Appendix B Safety Tag.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Tags</span>
+        <span class="front">What is the difference between Appendix A and Appendix B Safety Tags?</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Appendix B Safety Tags specify the Safety Document type and document number.
+        </p>
+      </div>
+    </details>
+
+    <details class="flash">
+      <summary>
+        <span class="badge">Scenario</span>
+        <span class="front">A Safety Controller instructs you to carry out an isolation — describe the process.</span>
+        <span class="hint">Click to reveal</span>
+      </summary>
+      <div class="back">
+        <span class="label">Back</span>
+        <p>
+Use a structured answer: confirm scope and plant/apparatus; identify all energy sources (including stored energy and interlocks); follow the Declaration of Isolation sequence; apply isolations, locks/keys, and safety tags; release/secure stored energy (drain, vent, purge as required); prove isolation where applicable; record details on the Declaration of Isolation; maintain control until authorised reinstatement; and reinstate only when instructed and safe to do so.
+        </p>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+
+    <div class="footer">
+      Tips: use <span class="kbd">Ctrl</span> + <span class="kbd">F</span> to find a phrase fast. 
+    </div>
+
+  </main>
+
+  <script>
+let quizPool = [];
+let currentAnswer = "";
+
+// Build question pool once page loads
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("details.flash").forEach(card => {
+    const question = card.querySelector(".front");
+    const answer = card.querySelector(".back p");
+    if(question && answer){
+      quizPool.push({
+        q: question.innerText.trim(),
+        a: answer.innerText.trim()
+      });
+    }
+  });
+});
+
+function randomQuestion(){
+  if(quizPool.length === 0) return;
+
+  const pick = quizPool[Math.floor(Math.random() * quizPool.length)];
+  currentAnswer = pick.a;
+
+  document.getElementById("quizQuestion").innerText = pick.q;
+  document.getElementById("quizAnswer").innerText = pick.a;
+
+  const card = document.getElementById("quizCard");
+  card.open = false;           // hide answer
+  card.style.display = "block";
+  speak(pick.q);
+}
+
+function revealAnswer(){
+  document.getElementById("quizCard").open = true;
+}
+
+    // Open/close all in a section
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-action]");
+      if (!btn) return;
+
+      const action = btn.dataset.action; // open | close
+      const target = btn.dataset.target; // section key
+      const container = document.querySelector(`.grid[data-section="${target}"]`);
+      if (!container) return;
+
+      container.querySelectorAll("details.flash").forEach(d => {
+        d.open = (action === "open");
+      });
+    });
+
+    // Smooth scroll for nav anchors
+    document.querySelectorAll('.nav a[href^="#"]').forEach(a => {
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const id = a.getAttribute("href");
+        const el = document.querySelector(id);
+        if (!el) return;
+        el.scrollIntoView({behavior:"smooth", block:"start"});
+        history.replaceState(null, "", id);
+      });
+    });
+
+  const CORRECT_PIN = "07500957725";
+
+  function unlock(){
+    const input = document.getElementById("pinInput").value;
+    const error = document.getElementById("error");
+
+    if(input === CORRECT_PIN){
+      document.getElementById("lockscreen").style.display = "none";
+      document.getElementById("content").style.display = "block";
+    } else {
+      error.textContent = "Incorrect PIN";
+    }
+  }
+
+  // Allow Enter key
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Enter" && document.getElementById("lockscreen").style.display !== "none"){
+      unlock();
+    }
+  });
+// 🔊 Text-to-Speech control
+let speechEnabled = true;
+
+function speak(text){
+  if(!speechEnabled) return;
+
+  // Stop any current speech
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.95;   // slightly slower for clarity
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  // Prefer an English voice if available
+  const voices = speechSynthesis.getVoices();
+  const englishVoice = voices.find(v => v.lang.startsWith("en"));
+  if(englishVoice) utterance.voice = englishVoice;
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function toggleSpeech(){
+  speechEnabled = !speechEnabled;
+  document.getElementById("speechBtn").innerText =
+    speechEnabled ? "🔊 Voice: ON" : "🔇 Voice: OFF";
+}
+
+  </script>
+</div>
+</body>
+</html>
